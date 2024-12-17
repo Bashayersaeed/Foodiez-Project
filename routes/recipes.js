@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-    const recipe = new Recipe(requestAnimationFrame.body);
+    const recipe = new Recipe(req.body);
     try {
         const newRecipe = await recipe.save();
         res.status(201).json(newRecipe);
