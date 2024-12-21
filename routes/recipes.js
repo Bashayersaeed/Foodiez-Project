@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Recipe = require('../model/Recipe');
+const passport = require('passport');
 
 router.get('/', async (req, res) => {
     try {
@@ -11,8 +12,12 @@ router.get('/', async (req, res) => {
    }
 });
 
-router.post('/', async (req, res) => {
-    const recipe = new Recipe(req.body);
+
+router.post('/', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    const recipe = new Recipe({
+        ...req.body,
+        creator:  req.user.id  // Add the user ID from the authenticated request
+    });
     try {
         const newRecipe = await recipe.save();
         res.status(201).json(newRecipe);
@@ -20,5 +25,7 @@ router.post('/', async (req, res) => {
         res.status(400).json({ message: err.message});
     }
 });
+
+
 
 module.exports = router;
